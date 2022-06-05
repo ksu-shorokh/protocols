@@ -11,21 +11,21 @@ class Tracert:
 
     def trace(self):
         a = subprocess.Popen(["tracert", self.target], stdout=subprocess.PIPE)
-        counter = 0
+        count = 0
         while True:
             line = a.stdout.readline().decode('windows-1251', errors='ignore')
             data = line.split()
-            if counter > 3:
+            if count > 3:
                 if not data:
                     break
-                if data[1] == '*' and data[2] == '*'and data[3] == '*':
+                if data[1] == '*' and data[2] == '*' and data[3] == '*':
                     break
                 ip = data[-1].replace('[', '').replace(']', '')
-                system, country, provider = self.whois(ip)
+                system, country, provider = self.get_as_country_provider(ip)
                 print(data[0], ip, system, country, provider)
-            counter += 1
+            count += 1
 
-    def whois(self, ip):
+    def get_as_country_provider(self, ip):
         try:
             with urlopen("https://www.nic.ru/whois/?searchWord=" + ip) as web:
                 info = web.read().decode('utf-8')
